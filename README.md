@@ -1,9 +1,4 @@
-# NYTimes Objective-C Style Guide
-
-This style guide outlines the coding conventions of the iOS teams at The New York Times. We welcome your feedback in [issues](https://github.com/NYTimes/objetive-c-style-guide/issues), [pull requests](https://github.com/NYTimes/objetive-c-style-guide/pulls) and [tweets](https://twitter.com/nytimesmobile). Also, [we’re hiring](http://jobs.nytco.com/job/New-York-iOS-Developer-Job-NY-10001/73366300/).
-
-Thanks to all of [our contributors](https://github.com/NYTimes/objective-c-style-guide/contributors).
-
+# Ciklum Objective-C Style Guide
 ## Introduction
 
 Here are some of the documents from Apple that informed the style guide. If something isn’t mentioned here, it’s probably covered in great detail in one of these:
@@ -58,16 +53,15 @@ UIApplication.sharedApplication.delegate;
 ## Spacing
 
 * Indent using 4 spaces. Never indent with tabs. Be sure to set this preference in Xcode.
-* Method braces and other braces (`if`/`else`/`switch`/`while` etc.) always open on the same line as the statement but close on a new line.
+* Method braces and other braces (`if`/`else`/`switch`/`while` etc.) always open on the same line as the statement.
 
 **For example:**
 ```objc
 if (user.isHappy) {
     // Do something
-}
-else {
+} else {
     // Do something else
-}
+} 
 ```
 * There should be exactly one blank line between methods to aid in visual clarity and organization.
 * Whitespace within methods should be used to separate functionality (though often this can indicate an opportunity to split the method into several, smaller methods). In methods with long or verbose names, a single line of whitespace may be used to provide visual separation before the method’s body.
@@ -75,7 +69,7 @@ else {
 
 ## Conditionals
 
-Conditional bodies should always use braces even when a conditional body could be written without braces (e.g., it is one line only) to prevent [errors](https://github.com/NYTimes/objective-c-style-guide/issues/26#issuecomment-22074256). These errors include adding a second line and expecting it to be part of the if-statement. Another, [even more dangerous defect](http://programmers.stackexchange.com/a/16530) may happen where the line “inside” the if-statement is commented out, and the next line unwittingly becomes part of the if-statement. In addition, this style is more consistent with all other conditionals, and therefore more easily scannable.
+Conditional bodies should always use braces even when a conditional body could be written without braces (e.g., it is one line only) to prevent errors. These errors include adding a second line and expecting it to be part of the if-statement. Another, [even more dangerous defect](http://programmers.stackexchange.com/a/16530) may happen where the line “inside” the if-statement is commented out, and the next line unwittingly becomes part of the if-statement. In addition, this style is more consistent with all other conditionals, and therefore more easily scannable.
 
 **For example:**
 ```objc
@@ -167,7 +161,7 @@ Property definitions should be used in place of naked instance variables wheneve
 ```objc
 @interface NYTSection: NSObject
 
-@property (nonatomic) NSString *headline;
+@property (strong, nonatomic) NSString *headline;
 
 @end
 ```
@@ -179,10 +173,35 @@ Property definitions should be used in place of naked instance variables wheneve
     NSString *headline;
 }
 ```
+Property modificatiors should be placed in next order:
+
+* memory managment
+* thread managment
+* access managment
+* getter and setter
+
+memory managment should always specified
+
+**For example:**
+
+```objc
+@property (strong, nonatomic) UIImageView *imageView;
+@property (assign, nonatomic, readonly, getter=isEnabled) BOOL enabled;
+```
+
+**Not:**
+
+```objc
+@property (nonatomic) NSString *title;
+@property (setter=isActivated, readwrite, assign) BOOL enabled;
+```
+
 
 #### Variable Qualifiers
 
-When it comes to the variable qualifiers [introduced with ARC](https://developer.apple.com/library/ios/releasenotes/objectivec/rn-transitioningtoarc/Introduction/Introduction.html#//apple_ref/doc/uid/TP40011226-CH1-SW4), the qualifier (`__strong`, `__weak`, `__unsafe_unretained`, `__autoreleasing`) should be placed between the asterisks and the variable name, e.g., `NSString * __weak text`. 
+When it comes to the variable qualifiers [introduced with ARC](https://developer.apple.com/library/ios/releasenotes/objectivec/rn-transitioningtoarc/Introduction/Introduction.html#//apple_ref/doc/uid/TP40011226-CH1-SW4), the qualifier (`__strong`, `__weak`, `__unsafe_unretained`, `__autoreleasing`) should be placed before variable class, e.g., `__weak NSString *text`.
+
+
 
 ## Naming
 
@@ -240,7 +259,7 @@ Categories may be used to concisely segment functionality and should be named to
 
 ```objc
 @interface UIViewController (NYTMediaPlaying)
-@interface NSString (NSStringEncodingDetection)
+@interface NSString (NYTStringEncodingDetection)
 ```
 
 **Not:**
@@ -398,21 +417,21 @@ Private properties should be declared in class extensions (anonymous categories)
 ```objc
 @interface NYTAdvertisement ()
 
-@property (nonatomic, strong) GADBannerView *googleAdView;
-@property (nonatomic, strong) ADBannerView *iAdView;
-@property (nonatomic, strong) UIWebView *adXWebView;
+@property (strong, nonatomic) GADBannerView *googleAdView;
+@property (strong, nonatomic) ADBannerView *iAdView;
+@property (strong, nonatomic) UIWebView *adXWebView;
 
 @end
 ```
 
 ## Image Naming
 
-Image names should be named consistently to preserve organization and developer sanity. They should be named as one camel case string with a description of their purpose, followed by the un-prefixed name of the class or property they are customizing (if there is one), followed by a further description of color and/or placement, and finally their state.
+Image names should be named consistently to preserve organization and developer sanity. They should be named with image type prefix and underscore string with a description of their purpose, followed by the un-prefixed name of the class or property they are customizing (if there is one), followed by a further description of color and/or placement, and finally their state.
 
 **For example:**
 
-* `RefreshBarButtonItem` / `RefreshBarButtonItem@2x` and `RefreshBarButtonItemSelected` / `RefreshBarButtonItemSelected@2x`
-* `ArticleNavigationBarWhite` / `ArticleNavigationBarWhite@2x` and `ArticleNavigationBarBlackSelected` / `ArticleNavigationBarBlackSelected@2x`.
+* `ic_refresh_bar_button_normal` / `ic_refresh_bar_button_normal@2x` and `ic_refresh_bar_button_selected` / `ic_refresh_bar_button_selected@2x`
+* `bg_article_navigation_bar_white` / `bg_article_navigation_bar_white@2x` and `bg_article_navigation_Bar_black_selected` / `bg_article_navigation_Bar_black_selected@2x`.
 
 Images that are used for a similar purpose should be grouped in respective groups in an Images folder or Asset Catalog.
 
@@ -435,7 +454,6 @@ if (someObject == nil) {
 ```objc
 if (isAwesome)
 if (!someNumber.boolValue)
-if (someNumber.boolValue == NO)
 ```
 
 **Not:**
@@ -495,16 +513,20 @@ In a [delegate or data source protocol](https://developer.apple.com/library/ios/
 
 This helps disambiguate in cases when an object is the delegate for multiple similarly-typed objects, and it helps clarify intent to readers of a class implementing these delegate methods.
 
+If delegate method doesn't return some value then naming convention should be in format action, object.
+
 **For example:**
 
 ```objc
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
+- (void)didStartLocationManager:(XYZLocationManager *)locationManager
 ```
 
 **Not:**
 
 ```objc
 - (void)didSelectTableRowAtIndexPath:(NSIndexPath *)indexPath;
+- (void)locationManagerDidStart:(XYZLocationManager *)locationManager;
 ```
 
 ## Xcode project
@@ -513,15 +535,3 @@ The physical files should be kept in sync with the Xcode project files in order 
 
 When possible, always turn on “Treat Warnings as Errors” in the target’s Build Settings and enable as many [additional warnings](http://boredzo.org/blog/archives/2009-11-07/warnings) as possible. If you need to ignore a specific warning, use [Clang’s pragma feature](http://clang.llvm.org/docs/UsersManual.html#controlling-diagnostics-via-pragmas).
 
-# Other Objective-C Style Guides
-
-If ours doesn’t fit your tastes, have a look at some other style guides:
-
-* [Google](http://google-styleguide.googlecode.com/svn/trunk/objcguide.xml)
-* [GitHub](https://github.com/github/objective-c-conventions)
-* [Adium](https://trac.adium.im/wiki/CodingStyle)
-* [Sam Soffes](https://gist.github.com/soffes/812796)
-* [CocoaDevCentral](http://cocoadevcentral.com/articles/000082.php)
-* [Luke Redpath](http://lukeredpath.co.uk/blog/2011/06/28/my-objective-c-style-guide/)
-* [Marcus Zarra](http://www.cimgf.com/zds-code-style-guide/)
-* [Wikimedia](https://www.mediawiki.org/wiki/Wikimedia_Apps/Team/iOS/ObjectiveCStyleGuide)
